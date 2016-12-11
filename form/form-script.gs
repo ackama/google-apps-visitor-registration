@@ -6,19 +6,22 @@ function handleFormSubmission(evt) {
 
   var guestNameItem = form.getItemById(guestNameItemId);
   var guestNameResponse = formResponse.getResponseForItem(guestNameItem);
+    var guestName = guestNameResponse.getResponse();
 
   var hostNameItem = form.getItemById(hostNameItemId);
   var hostNameResponse = formResponse.getResponseForItem(hostNameItem);
 
-  var hostFullName = guestNameResponse.getResponse();
+  var hostFullName = hostNameResponse.getResponse();
   var hostSlackName = findSlackUsernameForStaffMemberName_(hostFullName);
 
-  var hostName = hostNameResponse.getResponse();
+  
+  Logger.log("Finding Slack user " + hostFullName);
+  Logger.log("Notifying slack user " + hostSlackName);
 
   if (! hostSlackName)
     return;
 
-  postResponse_(hostSlackName, hostName);
+  postResponse_(hostSlackName, guestName);
 }
 
 function postResponse_(slackUsername, visitorName) {
@@ -51,7 +54,7 @@ function postResponse_(slackUsername, visitorName) {
   };
 
 
-  var url = PropertiesService.getScriptProperties("SLACK_WEBHOOK_URL");
+  var url = PropertiesService.getScriptProperties().getProperty("SLACK_WEBHOOK_URL");
 
   var directMessageResponse = UrlFetchApp.fetch(url, directMessageRequestOptions);
   var channelResponse = UrlFetchApp.fetch(url, channelRequestOptions);
@@ -75,3 +78,4 @@ function findSlackUsernameForStaffMemberName_(staffMemberName) {
 
   return null;
 }
+
